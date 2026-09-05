@@ -6,7 +6,7 @@ got 100usd credit on akamai
 
 ## creating wildcard to resolve DNS record
 if cloudflare is your domain provider
-- create a new A record
+- create a new A record *.zrok
 - set the IP of your akamai/linode IP address
 - set it to DNS only, not proxified
-- 
+- check if it resolves your IP by going to dnschecker.org or via bash dig test.zrok.vicably.com
