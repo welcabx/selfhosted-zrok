@@ -1,12 +1,113 @@
-# selfhosted-zrok
+# Self-Hosted zrok Setup — Progress Log
 
-got 100usd credit on akamai
--mostly default when creating the instance. singapore 2 region as it has the least latency
--check firewall inbound configuration for SSH
+Setting up a self-hosted [zrok](https://zrok.io) instance on Akamai Cloud (Linode), using the manual (non-Docker) installation path with OpenZiti.
 
-## creating wildcard to resolve DNS record
-if cloudflare is your domain provider
-- create a new A record *.zrok
-- set the IP of your akamai/linode IP address
-- set it to DNS only, not proxified
-- check if it resolves your IP by going to dnschecker.org or via bash dig test.zrok.vicably.com
+**Domain:** `zrok.vicably.com` (wildcard, DNS managed on Cloudflare)
+**VPS:** Akamai Cloud (Linode) Nanode, funded via the $100/60-day trial credit
+**Approach:** Manual install (controller + router + zrok binary), not Docker Compose
+
+---
+
+## 1. Akamai Cloud VPS
+
+- Signed up for Akamai Cloud, activated $100 / 60-day trial credit (requires a payment method on file; not charged during trial)
+- Created a Nanode (1–2 GB RAM, Ubuntu) — sufficient for testing
+- **Networking settings used:**
+    - Network Connection: Public Internet
+    - IP Address: Auto-assigned
+    - Network Interface Type: Linode Interfaces (Recommended)
+
+## 2. Firewall (Akamai Cloud Firewall)
+
+Created a Custom Firewall (`zrok-instance-fw`):
+- Default Inbound Policy: **Drop**
+- Default Outbound Policy: **Accept**
+- Assigned to the Linode *after* creation (required for Linode Interfaces)
+
+**Inbound rules added:**
+
+| Label | Protocol | Port | Source |
+|---|---|---|---|
+| SSH | TCP | 22 | Anywhere (tighten later) |
+| HTTP | TCP | 80 | Anywhere |
+| HTTPS | TCP | 443 | Anywhere |
+| Ziti Router | TCP | 3022 | Anywhere |
+| Ziti Controller edge API | TCP | 1280 | Anywhere |
+
+> Note: rules must go in **Inbound Rules**, not Outbound — an early mistake (an "accept outbound SSH" rule) caused SSH timeouts until corrected.
+
+## 3. DNS (Cloudflare)
+
+vicably.com's DNS stays on Cloudflare (no nameserver delegation needed):
+
+- **Wildcard record:** `A` `*.zrok` → Linode's public IP — **DNS only (grey cloud)**, not proxied
+- **Controller record:** `A` `admin.zrok` → same IP (covered by the wildcard, used as the controller's FQDN instead of a separate subdomain)
+
+Verified with `dig` / dnschecker.org before proceeding.
+
+Cloudflare API token generated (Edit zone DNS, scoped to vicably.com) — reserved for the TLS/Caddy step later.
+
+## 4. OpenZiti Controller
+
+```bash
+curl -sS https://get.openziti.io/install.bash | sudo bash -s openziti
+sudo apt-get install openziti-controller
+```
+
+Bootstrap answers:
+- Configure ziti-controller now? **Y**
+- Joining an existing cluster? **N** (this is the first/only node)
+- Permanent external address: **admin.zrok.vicably.com**
+- Install OpenZiti Console (ZAC)? **N** (skipped — not required for zrok)
+- Enable automatic certificate renewal timer? **Y**
+
+Verified:
+```bash
+sudo systemctl status ziti-controller.service   # active (running)
+ziti edge login admin.zrok.vicably.com:1280 -u admin -p '<password>' -y   # success
+```
+
+Controller edge API port: **1280** (added to firewall).
+
+## 5. OpenZiti Router
+
+```bash
+sudo apt-get install openziti-router
+```
+
+Bootstrap answers:
+- Configure ziti-router now? **Y**
+- Permanent external address: **admin.zrok.vicably.com**
+- Router port: **3022** (default)
+- Enrollment token: generated from a second SSH session:
+  ```bash
+  ziti edge create edge-router router1 -o /tmp/router1.jwt
+  ```
+  then supplied `/tmp/router1.jwt` as the path at the prompt.
+
+Verified:
+```bash
+sudo systemctl status ziti-router.service     # active (running)
+ziti edge list edge-routers                   # router1 shown, connected
+```
+
+## 6. zrok Binary — In Progress
+
+```bash
+sudo apt install zrok
+zrok version
+```
+
+Confirmed this is the correct manual-path package (not the `zrok2` bundled-dependencies variant, which auto-installs PostgreSQL/RabbitMQ/InfluxDB via its own bootstrap flow).
+
+**Next up:**
+- [ ] Create working directory for zrok config (e.g. `/opt/zrok/etc`)
+- [ ] Write `etc/ctrl.yml` (zrok controller config — endpoint + `ziti` stanza with admin credentials)
+- [ ] Run `zrok admin bootstrap etc/ctrl.yml`
+- [ ] Create the public frontend (`etc/http-frontend.yml`, `host_match: zrok.vicably.com`)
+- [ ] Put a reverse proxy (Caddy/Nginx) in front for TLS, using Cloudflare DNS-01 challenge for the wildcard cert
+- [ ] Point the Termux zrok client at the new instance (`zrok config set apiEndpoint ...`, `zrok enable <token>`)
+
+---
+
+*Credentials (admin passwords, tokens, JWTs) are intentionally not recorded in this file — keep those in a secure password manager instead.*
