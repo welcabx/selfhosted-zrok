@@ -12,30 +12,32 @@ This is a manual setup guide in self-hosting [zrok]('https://zrok.io') on a VPS.
 ## 1. Akamai Cloud VPS
 
 - Signed up for Akamai Cloud, activated $100 / 60-day trial credit (requires a payment method on file; not charged during trial)
-- Created a Nanode (1–2 GB RAM, Ubuntu) — sufficient for testing
-- **Networking settings used:**
-    - Network Connection: Public Internet
-    - IP Address: Auto-assigned
-    - Network Interface Type: Linode Interfaces (Recommended)
+- Created a Linode VPS under Compute:
+  - **Region:** `Singapore` (The lowest ping. Check their speedtest page.)
+  - **OS:** `Ubuntu 24 LTS`
+  - **Linode Plan:** `Nanode 1 GB` under `Shared CPU` tab
+  - **Linode Label:** `zrok-sg` (Feel free to name it different)
+  - **SSH keys:** Added public SSH key and checked it
+  - **Disk Encryption:** checked `encrypt disk`
+  - **Network Connection:** `Public internet`
+  - **IP Address:** `Auto assigned`
+  - **Network interface type:** `Linode interfaces`
+  - **Public interface firewall:** Create firewall, set it to `custom`, added label as `zrok-fw` and submit
 
-## 2. Firewall (Akamai Cloud Firewall)
+## 2. Setup SSH 
+Go to the VPS console > `Networking` > `Firewalls`:
+- Choose the firewall created and `add an inbound rule`
+- Choose `Preset` to `SSH`
+- Get the `CIDR` of your device by checking `whatismyip`
+- Copy and paste your device `CIDR` to `Source` instead of using default `All IPv4, All IPv6`
+- Save it by clicking `Add Rule`
 
-Created a Custom Firewall (`zrok-instance-fw`):
-- Default Inbound Policy: **Drop**
-- Default Outbound Policy: **Accept**
-- Assigned to the Linode *after* creation (required for Linode Interfaces)
+**Inbound rule added:**
 
-**Inbound rules added:**
+| Label | Protocol | Port | Source          |
+|---|---|---|-----------------|
+| SSH | TCP | 22 | deviceIP/subnet |
 
-| Label | Protocol | Port | Source |
-|---|---|---|---|
-| SSH | TCP | 22 | Anywhere (tighten later) |
-| HTTP | TCP | 80 | Anywhere |
-| HTTPS | TCP | 443 | Anywhere |
-| Ziti Router | TCP | 3022 | Anywhere |
-| Ziti Controller edge API | TCP | 1280 | Anywhere |
-
-> Note: rules must go in **Inbound Rules**, not Outbound — an early mistake (an "accept outbound SSH" rule) caused SSH timeouts until corrected.
 
 ## 3. DNS (Cloudflare)
 
