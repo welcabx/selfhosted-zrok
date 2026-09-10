@@ -58,8 +58,8 @@ On the cloudflare's account home, click your registered domain.
 
 Verified with `dig` or `dnschecker.org` before proceeding.
 
-## 4. OpenZiti Controller
-
+## 4. Deploy OpenZiti Controller
+SSH to your VPS and do the following
 ```bash
 curl -sS https://get.openziti.io/install.bash | sudo bash -s openziti
 sudo apt-get install openziti-controller
@@ -67,18 +67,27 @@ sudo apt-get install openziti-controller
 
 Bootstrap answers:
 - Configure ziti-controller now? **Y**
-- Joining an existing cluster? **N** (this is the first/only node)
-- Permanent external address: **admin.zrok.vicably.com**
-- Install OpenZiti Console (ZAC)? **N** (skipped — not required for zrok)
+- Joining an existing cluster? **N**
+- Permanent external address: **admin.zrok.mydomain.com** 
+  - We use `admin` but you can use anyname
+- Enter the unique name for this node in the cluster: **Press Enter**
+- Enter the trust domain shared by all nodes in the cluster: **Press Enter**
+- Enter the controller port [1280]: **Press Enter**
+- Enter the name of the default user [admin]: **Press Enter**
+- Generate a random password for 'admin': **Y** 
+  - Save the output in a safe place
+- Configure the OpenZiti Console (web UI)? **N**
 - Enable automatic certificate renewal timer? **Y**
 
-Verified:
+Verified ziti controller is running:
 ```bash
 sudo systemctl status ziti-controller.service   # active (running)
-ziti edge login admin.zrok.vicably.com:1280 -u admin -p '<password>' -y   # success
+```
+Login to the ziti controller
+```bash
+ziti edge login localhost:1280 -u admin -p '<password>' -y   # success
 ```
 
-Controller edge API port: **1280** (added to firewall).
 
 ## 5. OpenZiti Router
 
