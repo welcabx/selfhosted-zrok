@@ -1,10 +1,11 @@
-# Self-Hosted zrok Setup — Progress Log
+# Self-Hosting zrok 
 
-Setting up a self-hosted [zrok](https://zrok.io) instance on Akamai Cloud (Linode), using the manual (non-Docker) installation path with OpenZiti.
+This is a manual setup guide in self-hosting [zrok]('https://zrok.io') on a VPS.
 
-**Domain:** `zrok.vicably.com` (wildcard, DNS managed on Cloudflare)
-**VPS:** Akamai Cloud (Linode) Nanode, funded via the $100/60-day trial credit
-**Approach:** Manual install (controller + router + zrok binary), not Docker Compose
+> [!IMPORTANT]
+> - **VPS:** Akamai Cloud
+> - **Domain:** `sub.domain.com` and its wildcard. DNS managed on Cloudflare
+> - **Approach:** Manual installation of OpenZiti's controller, router and zrok
 
 ---
 
