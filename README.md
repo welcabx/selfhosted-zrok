@@ -89,21 +89,22 @@ ziti edge login localhost:1280 -u admin -p '<password>' -y   # success
 ```
 
 
-## 5. OpenZiti Router
+## 5. Deploy OpenZiti Router
+Create a ziti router's enrollment token.
+```bash
+ziti edge create edge-router "router1" -o /tmp/router1.jwt
+```
 
+Install ziti router
 ```bash
 sudo apt-get install openziti-router
 ```
 
 Bootstrap answers:
 - Configure ziti-router now? **Y**
-- Permanent external address: **admin.zrok.vicably.com**
+- Permanent external address: **router1.zrok.mydomain.com**
 - Router port: **3022** (default)
-- Enrollment token: generated from a second SSH session:
-  ```bash
-  ziti edge create edge-router router1 -o /tmp/router1.jwt
-  ```
-  then supplied `/tmp/router1.jwt` as the path at the prompt.
+- Enrollment token: /tmp/router1.jwt
 
 Verified:
 ```bash
