@@ -29,8 +29,8 @@ Go to the VPS console > `Networking` > `Firewalls`:
 - Choose the firewall created and `add an inbound rule`
 - Choose `Preset` to `SSH`
 - Get the `CIDR` of your device by checking `whatismyip`
-- Copy and paste your device `CIDR` to `Source` instead of using default `All IPv4, All IPv6`
-- Save it by clicking `Add Rule`
+- Copy and paste your device `CIDR` to `Source` select 'IP/Netmask' instead of using default `All IPv4, All IPv6`
+- Click on `Add Rule` and then `Save changes`
 
 **Inbound rule added:**
 
