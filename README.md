@@ -39,16 +39,24 @@ Go to the VPS console > `Networking` > `Firewalls`:
 | SSH | TCP | 22 | deviceIP/subnet |
 
 
-## 3. DNS (Cloudflare)
+## 3. DNS setup via Cloudflare
 
-vicably.com's DNS stays on Cloudflare (no nameserver delegation needed):
+`yourdomain.com` DNS stays on Cloudflare. There is no nameserver delegation needed.
+We will use the subdomain as the domain on this setup. In this case, we will use `zrok.mydomain.com` and its wildcard.
+> You can choose whatever subdomain you want.
 
-- **Wildcard record:** `A` `*.zrok` → Linode's public IP — **DNS only (grey cloud)**, not proxied
-- **Controller record:** `A` `admin.zrok` → same IP (covered by the wildcard, used as the controller's FQDN instead of a separate subdomain)
+On the cloudflare's account home, click your registered domain.
+- Go to `DNS` > `Records` > `Add Record`
 
-Verified with `dig` / dnschecker.org before proceeding.
 
-Cloudflare API token generated (Edit zone DNS, scoped to vicably.com) — reserved for the TLS/Caddy step later.
+**Added the following records:**
+
+| Type | Name | IPv4 address | Proxy status |
+|---|---|---|---|
+| A | zrok.mydomain.com | vpsPublicIP | DNS only |
+| A | *.zrok.mydomain.com | vpsPublicIP | DNS only |
+
+Verified with `dig` or `dnschecker.org` before proceeding.
 
 ## 4. OpenZiti Controller
 
