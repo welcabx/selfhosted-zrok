@@ -112,14 +112,61 @@ sudo systemctl status ziti-router.service     # active (running)
 ziti edge list edge-routers                   # router1 shown, connected
 ```
 
-## 6. zrok Binary — In Progress
+## 6. Install zrok Binary
 
 ```bash
 sudo apt install zrok
 zrok version
 ```
 
-Confirmed this is the correct manual-path package (not the `zrok2` bundled-dependencies variant, which auto-installs PostgreSQL/RabbitMQ/InfluxDB via its own bootstrap flow).
+## 7. Configure controller
+- create working directory `/opt/zrok/etc`
+- make a zrok controller configuration file `etc/ctrl.yml`
+- generate a random admin secrets and save it on safe place.
+  - ```LC_ALL=C tr -dc _A-Z-a-z-0-9 < /dev/urandom | head -c32```
+- configure the controller file
+  - ```bash
+    v:  4
+    
+    admin:
+      secrets:
+        - yourRandomsecretGenerated
+    
+    endpoint:
+      host: 0.0.0.0
+      port: 18080
+    
+    invites:
+      invites_open: true
+    
+    store:
+      path: zrok.db
+      type: sqlite3
+    
+    ziti:
+      api_endpoint: "https://127.0.0.1:1280"
+      username: admin
+      password: "yourZitiPassword"
+    ```
+    
+- export zrok token and endpoint based on the `ctrl.yml`
+  - ```bash
+    export ZROK_ADMIN_TOKEN=adminToken
+    export ZROK_API_ENDPOINT=http://127.0.0.1:18080
+    ```
+    
+- bootstrap openziti for zrok
+  - ```bash
+    zrok admin bootstrap /opt/zrok/etc/ctrl.yml
+    ```
+  - Notice the warning:
+    ```WARNING zrok/controller.Bootstrap: missing public frontend for ziti id 'sqJRAINSiB'; please use 'zrok admin create frontend sqJRAINSiB public https://{token}.your.dns.name' to create a frontend instance```
+
+    
+- Run zrok controller
+  - ```bash
+    zrok controller /opt/zrok/etc/ctrl.yml
+    ```
 
 **Next up:**
 - [ ] Create working directory for zrok config (e.g. `/opt/zrok/etc`)
