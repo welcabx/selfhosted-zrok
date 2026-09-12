@@ -301,3 +301,75 @@ Save it for later.
     curl -I https://zrok.mydomain.com
     ```
   - If you get `http` response back, TLS and proxying are working.
+
+## 13. zrok controller, frontend and caddy as systemd
+
+- create the following files at `/etc/systemd/system/`
+  - zrok-controller.service
+    ```bash
+    [Unit]
+    Description=zrok Controller
+    After=network.target
+  
+    [Service]
+    Type=simple
+    ExecStart=/usr/bin/zrok controller /opt/zrok/etc/ctrl.yml
+    Restart=on-failure
+    RestartSec=5
+    User=root
+    WorkingDirectory=/opt/zrok/etc
+  
+    [Install]
+    WantedBy=multi-user.target
+    ```
+  
+  - zrok-frontend.service
+    ```bash
+    [Unit]
+    Description=zrok Frontend
+    After=network.target zrok-controller.service
+    Requires=zrok-controller.service
+  
+    [Service]
+    Type=simple
+    ExecStart=/usr/bin/zrok access public /opt/zrok/etc/http-frontend.yml
+    Restart=on-failure
+    RestartSec=5
+    User=root
+    WorkingDirectory=/opt/zrok/etc
+  
+    [Install]
+    WantedBy=multi-user.target
+    ```
+  
+  - caddy.service
+    ```bash
+    [Unit]
+    Description=Caddy
+    After=network.target zrok-frontend.service
+  
+    [Service]
+    Type=simple
+    ExecStart=/usr/local/bin/caddy run --config /etc/caddy/Caddyfile
+    EnvironmentFile=/etc/caddy/cloudflare.env
+    Restart=on-failure
+    RestartSec=5
+    User=root
+  
+    [Install]
+    WantedBy=multi-user.target
+    ```
+    
+- Enable and start all of them
+  ```bash
+  systemctl daemon-reload
+  systemctl enable --now zrok-controller
+  systemctl enable --now zrok-frontend
+  systemctl enable --now caddy
+  ```
+  
+- Verify the services are running
+  ```bash
+  systemctl status zrok-controller zrok-frontend caddy
+  ss -tlnp
+  ```
