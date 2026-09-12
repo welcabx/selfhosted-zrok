@@ -168,6 +168,26 @@ zrok version
     zrok controller /opt/zrok/etc/ctrl.yml
     ```
 
+## 8. Create zrok frontend
+
+Let the zrok controller run and open a new terminal. SSH to the VPS and do the following:
+
+- export zrok token and endpoint based on the `ctrl.yml`
+  - ```bash
+    export ZROK_ADMIN_TOKEN=adminToken
+    export ZROK_API_ENDPOINT=http://127.0.0.1:18080
+    ```
+- create the public frontend by using the ziti frontend id earlier. The one that shows a `warning` after we run `zrok admin bootstrap`.
+  - ```bash
+    zrok admin create frontend <frontendID> public http://{token}.zrok.quigley.com:8080
+    ```
+  - > [!TIP]
+    > If you are not able to save the frontend ID you can retrieve by doing the following:\
+    ```bash
+    ziti edge login localhost:1280 -u admin -p <zitiPassword>
+    ziti edge list identities
+    ```
+
 **Next up:**
 - [ ] Create working directory for zrok config (e.g. `/opt/zrok/etc`)
 - [ ] Write `etc/ctrl.yml` (zrok controller config — endpoint + `ziti` stanza with admin credentials)
