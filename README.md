@@ -187,6 +187,7 @@ Let the zrok controller run and open a new terminal. SSH to the VPS and do the f
     ziti edge login localhost:1280 -u admin -p <zitiPassword>
     ziti edge list identities
     ```
+    > Issue retrieving frontend ID, please refer to [Issue #1](https://github.com/welcabx/selfhosted-zrok/issues/1)
 
 **Next up:**
 - [ ] Create working directory for zrok config (e.g. `/opt/zrok/etc`)
