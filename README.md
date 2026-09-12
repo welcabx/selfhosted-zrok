@@ -37,7 +37,12 @@ Go to the VPS console > `Networking` > `Firewalls`:
 | Label | Protocol | Port | Source          |
 |---|---|---|-----------------|
 | SSH | TCP | 22 | deviceIP/subnet |
+| HTTP | TCP | 80 | All IPv4/v6 |
+| HTTPS | TCP | 443 | All IPv4/v6 |
+| ziti-controller | TCP | 1280 | All IPv4/v6 |
+| ziti-router | TCP | 3022 | All IPv4/v6 |
 
+> Added ziti controller and router ports to avoid issues: #3 and #5 
 
 ## 3. DNS setup via Cloudflare
 
