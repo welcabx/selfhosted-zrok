@@ -179,15 +179,31 @@ Let the zrok controller run and open a new terminal. SSH to the VPS and do the f
     ```
 - create the public frontend by using the ziti frontend id earlier. The one that shows a `warning` after we run `zrok admin bootstrap`.
   - ```bash
-    zrok admin create frontend <frontendID> public http://{token}.zrok.quigley.com:8080
+    zrok admin create frontend <frontendID> public http://{token}.zrok.mydomain.com:8080
     ```
   - > [!TIP]
-    > If you are not able to save the frontend ID you can retrieve by doing the following:\
+    > If you are not able to save the frontend ID you can retrieve by doing the following:
     ```bash
     ziti edge login localhost:1280 -u admin -p <zitiPassword>
     ziti edge list identities
     ```
     > Issue retrieving frontend ID, please refer to [Issue #1](https://github.com/welcabx/selfhosted-zrok/issues/1)
+
+## 9. Configure and start the public frontend
+- Create a http fronted config file in `/opt/zrok/etc/http-frontend.yml`
+  ```bash
+  v:  4
+  host_match: zrok.mydomain.com
+  address: 0.0.0.0:8080
+  ```
+
+- Ensure that the `zrok controller` is still running.
+  - Open new SSH terminal
+  - export the `ZROK_ADMIN_TOKEN` and `ZROK_API_ENDPOINT`
+  - initiate public frontend
+    - ```bash
+      zrok access public /opt/zrok/etc/http-frontend.yml
+      ```
 
 **Next up:**
 - [ ] Create working directory for zrok config (e.g. `/opt/zrok/etc`)
@@ -199,4 +215,4 @@ Let the zrok controller run and open a new terminal. SSH to the VPS and do the f
 
 ---
 
-*Credentials (admin passwords, tokens, JWTs) are intentionally not recorded in this file — keep those in a secure password manager instead.*
+*Credentials (admin passwords, tokens, JWTs) are intentionally not recorded in this file — keep those in a secure password manager instead.*2
