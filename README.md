@@ -218,4 +218,81 @@ Save it for later.
 - Go to `https://dash.cloudflare.com/profile/api-tokens`
 - Click `Create token` and use the `Edit zone DNS` template
 - Under `Zone resources`, select `include` > `specific zone` > choose mydomain.com
-- Click `continue to summary` > `create token` and copy the token generated.
+- Click `continue to summary` > `create token` and copy/save the token generated.
+
+## 12. Setting up TLS using Caddy
+- verify your VPS architecture
+  - ```bash
+    uname -m
+    ```
+- Go to `https://caddyserver.com/download`
+  - select the `platform` based on your VPS architecture
+  - search `cloudflare` on `filter packages and modules`
+  - click and ensure that the `caddy-dns/cloudflare` is highlighted.
+  - hover to the `download` button, `right-click` and `copy link`
+
+
+- Download caddy binary and create config folder
+  - ```bash
+    curl -o caddy "<paste the caddy link here>"
+    chmod +x caddy
+    sudo mv caddy /usr/local/bin/caddy
+    mkdir -p /etc/caddy
+    ```
+  
+- Store the cloudflare API token
+  - ```bash
+    echo "CLOUDFLARE_API_TOKEN=yourtokenhere" > /etc/caddy/cloudflare.env
+    chmod 400 /etc/caddy/cloudflare.env
+    ```
+
+- Create the Caddyfile
+  - ```bash
+    nano /etc/caddy/Caddyfile
+    ```
+  - Paste this in:
+    - ```bash
+      {
+        email my@mydomain.com
+      }
+      
+      zrok.mydomain.com {
+        reverse_proxy 127.0.0.1:18080
+        tls {
+          dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
+      }
+      
+      *.zrok.mydomain.com {
+        reverse_proxy 127.0.0.1:8080
+        tls {
+          dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
+      }
+      ```
+      
+- Ensure that the `controller` and `frontend` are running. Check if the associated ports are listening.
+  - ```bash
+    ss -tulnp | grep zrok
+    ```
+    > Listening ports should be `18080` and `8080`
+  - If not, run them each on a separate SSH terminal:
+    - ```bash
+      zrok controller /opt/zrok/etc/ctrl.yml
+      zrok access public /opt/zrok/etc/http-frontend.yml 
+      ```
+
+- Run `caddy` manually
+  - ```bash
+    export $(cat /etc/caddy/cloudflare.env | xargs)
+    caddy run --config /etc/caddy/Caddyfile
+    ```
+  - It might take up to `60 seconds`
+  - If you see `certificate obtained successfully for zrok.mydomain.com` TLS is completed.
+
+- Go back to your VPS console,`Add inbound rule` firewall for `http` and `https`
+- verify TLS by opening a new terminal
+  - ```bash
+    curl -I https://zrok.mydomain.com
+    ```
+  - If you get `http` response back, TLS and proxying are working.
