@@ -214,14 +214,8 @@ zrok admin create account <email> <password>
 
 Save it for later.
 
-**Next up:**
-- [ ] Create working directory for zrok config (e.g. `/opt/zrok/etc`)
-- [ ] Write `etc/ctrl.yml` (zrok controller config — endpoint + `ziti` stanza with admin credentials)
-- [ ] Run `zrok admin bootstrap etc/ctrl.yml`
-- [ ] Create the public frontend (`etc/http-frontend.yml`, `host_match: zrok.vicably.com`)
-- [ ] Put a reverse proxy (Caddy/Nginx) in front for TLS, using Cloudflare DNS-01 challenge for the wildcard cert
-- [ ] Point the Termux zrok client at the new instance (`zrok config set apiEndpoint ...`, `zrok enable <token>`)
-
----
-
-*Credentials (admin passwords, tokens, JWTs) are intentionally not recorded in this file — keep those in a secure password manager instead.*2
+## 11. Create Cloudflare API Token
+- Go to `https://dash.cloudflare.com/profile/api-tokens`
+- Click `Create token` and use the `Edit zone DNS` template
+- Under `Zone resources`, select `include` > `specific zone` > choose mydomain.com
+- Click `continue to summary` > `create token` and copy the token generated.
