@@ -204,6 +204,15 @@ Let the zrok controller run and open a new terminal. SSH to the VPS and do the f
     - ```bash
       zrok access public /opt/zrok/etc/http-frontend.yml
       ```
+      
+## 10. Create a user account
+Ensure that `ZROK_ADMIN_TOKEN` and `ZROK_API_ENDPOINT` are exported.
+```bash
+zrok admin create account <email> <password>
+```
+> Example output: SuGzRPjVDIcF
+
+Save it for later.
 
 **Next up:**
 - [ ] Create working directory for zrok config (e.g. `/opt/zrok/etc`)
