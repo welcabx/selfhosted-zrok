@@ -373,3 +373,30 @@ Save it for later.
   systemctl status zrok-controller zrok-frontend caddy
   ss -tlnp
   ```
+  
+## 14. Enable environment and setup share
+
+- Update the frontend URL template
+  - ```bash
+    export ZROK_ADMIN_TOKEN=admintoken
+    zrok admin list frontends # This will show the frontend admin token needed
+    zrok admin update frontend <frontend token> --url-template "https://{token}.zrok.mydomain.com"
+    ```
+
+- Enable environment on VPS and on android.
+  - ```bash
+    zrok enable <account token> # generated on Step 10
+    ```
+    
+- Test the share on android device.
+  - Run a simple web server using `termux`
+    - ```bash
+      python -m http.server 5000
+      ```
+      
+  - Open a new `termux` window, set a static share and start it.
+    - ```bash
+      zrok reserve public http://localhost:5000 --unique-name <name of share>
+      zrok share reserved <name of share>
+      ```
+  - Open a browser and go to the share: https://sharename.zrok.mydomain.com
