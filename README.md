@@ -400,3 +400,4 @@ Save it for later.
       zrok share reserved <name of share>
       ```
   - Open a browser and go to the share: https://sharename.zrok.mydomain.com
+  > Incorporate my [mobile Homelab]('https://github.com/welcabx/mobile-homelab') project.
