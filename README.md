@@ -186,13 +186,12 @@ Let the zrok controller run and open a new terminal. SSH to the VPS and do the f
   - ```bash
     zrok admin create frontend <frontendID> public http://{token}.zrok.mydomain.com:8080
     ```
-  > [!TIP]
-  > If you are not able to save the frontend ID you can retrieve by doing the following:
-    ```bash
-    ziti edge login localhost:1280 -u admin -p <zitiPassword>
-    ziti edge list identities
-    ```
-    > Issue retrieving frontend ID, please refer to [Issue #1](https://github.com/welcabx/selfhosted-zrok/issues/1)
+> [!TIP]
+> If you are not able to save the frontend ID you can retrieve by doing the following:
+`ziti edge login localhost:1280 -u admin -p <zitiPassword>` then do 
+`ziti edge list identities`
+
+> Issue retrieving frontend ID, please refer to [Issue #1](https://github.com/welcabx/selfhosted-zrok/issues/1)
 
 ## 9. Configure and start the public frontend
 - Create a http fronted config file in `/opt/zrok/etc/http-frontend.yml`
