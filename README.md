@@ -1,4 +1,4 @@
-# Self-Hosting zrok 
+# Self-Hosting zrok: VPS + Android Termux Client 
 
 This is a manual setup guide in self-hosting [zrok]('https://zrok.io') on a VPS.
 
