@@ -1,5 +1,5 @@
 # Self-Hosting zrok: VPS + Android Termux Client 
-Self-hosted zrok tunneling stack (OpenZiti + Caddy) for a mobile homelab, with an Android/Termux client sharing local services publicly through your own infrastructure instead of the public [zrok]('https://zrok.io') service.
+Self-hosted [zrok](https://zrok.io) tunneling stack (OpenZiti + Caddy) for a mobile homelab, with an Android/Termux client sharing local services publicly through your own infrastructure instead of the public service.
 
 
 > [!IMPORTANT]
