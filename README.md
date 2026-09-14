@@ -402,3 +402,17 @@ Save it for later.
       ```
   - Open a browser and go to the share: https://sharename.zrok.mydomain.com
 
+---
+**Status**
+\
+Live and running as of September 2026 — self-hosted controller, frontend, and
+TLS all managed via systemd, with an Android client actively sharing services
+through it.
+
+**Related**
+\
+[OpenZiti docs](https://netfoundry.io/docs/openziti/category/deployments)
+\
+[zrok docs](https://netfoundry.io/docs/zrok/1.1/guides/self-hosting/linux/)
+\
+[mobile Homelab](https://github.com/welcabx/mobile-homelab)
