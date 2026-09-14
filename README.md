@@ -1,6 +1,8 @@
 # Self-Hosting zrok: VPS + Android Termux Client 
-Self-hosted [zrok](https://zrok.io) tunneling stack (OpenZiti + Caddy) for a mobile homelab, with an Android/Termux client sharing local services publicly through your own infrastructure instead of the public service.
+**Self-hosted [zrok](https://zrok.io) tunneling stack (OpenZiti + Caddy) for a mobile homelab, with an Android/Termux client sharing local services publicly through your own infrastructure instead of the public service.**
 
+> [!NOTE]
+> This is part of my ongoing mobile-homelab project — running infrastructure services (Flask + PostgreSQL, and now this self-hosted zrok stack) directly from an Android phone via Termux.
 
 > [!IMPORTANT]
 > - **VPS:** Akamai Cloud
@@ -399,4 +401,4 @@ Save it for later.
       zrok share reserved <name of share>
       ```
   - Open a browser and go to the share: https://sharename.zrok.mydomain.com
-  > Incorporate my [mobile Homelab]('https://github.com/welcabx/mobile-homelab') project.
+
